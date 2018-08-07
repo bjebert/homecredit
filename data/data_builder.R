@@ -26,3 +26,5 @@ rm(application_test)
 
 applications[origin == "train", fold := 1:.N %% 10]
 applications[fold %in% 7:9, origin := "val"]
+
+fwrite(applications, "data/applications.csv", row.names = FALSE)
