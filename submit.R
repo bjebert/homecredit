@@ -1,6 +1,7 @@
-# Submit a model
+# Submit predictions directly to Kaggle
 
 submit_predictions <- function(version, description = "", val_error = NA, dry_run = FALSE) {
+    library(data.table)
     
     print("Reading files...")
     
@@ -38,9 +39,9 @@ submit_predictions <- function(version, description = "", val_error = NA, dry_ru
     
     print("Submitting to Kaggle...")
 
-    system(sprintf("kaggle competitions submit -c home-credit-default-risk -f %s -m '%s (CV: %s)'",
+    system(sprintf('kaggle competitions submit -c home-credit-default-risk -f %s -m "%s (CV: %s)"',
                    write_location, description, val_error))
     
 }
 
-preds <- submit_predictions("001", "Get off the bottom of the leaderboard, simple H2O", 0.742826)
+preds <- submit_predictions("003", "Add Babak's feature AMT_RATIO", 0.7503725)

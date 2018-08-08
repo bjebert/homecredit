@@ -14,5 +14,4 @@ evaluate <- function(model_name) {
     Metrics::auc(applications[origin == "val"][["TARGET"]], predictions)
 }
 
-evaluate("001")
-
+evaluate("003")

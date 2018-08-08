@@ -24,6 +24,8 @@ preprocess_data <- function(data) {
                                               FALSE, 
                                               NA))]
     
+    data[, AMT_RATIO := AMT_CREDIT / AMT_GOODS_PRICE]
+    
     data <- data[, x, with = FALSE]
     data <- remove_categorical(data)
     
