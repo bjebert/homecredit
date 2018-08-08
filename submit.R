@@ -43,4 +43,4 @@ submit_predictions <- function(version, description = "", val_error = NA, dry_ru
     
 }
 
-preds <- submit_predictions("001", "Test run", 1.666451, dry_run = TRUE)
+preds <- submit_predictions("001", "Get off the bottom of the leaderboard, simple H2O", 0.742826)
