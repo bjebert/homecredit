@@ -37,3 +37,6 @@ rsconnect/
 
 # Data
 *.csv
+
+# xgb
+xgboost.model
