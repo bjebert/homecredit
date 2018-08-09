@@ -1,4 +1,5 @@
 set.seed(0)
+library(data.table)
 library(xgboost)
 
 
@@ -31,6 +32,21 @@ preprocess_data <- function(data) {
     
     
     data <- data[, x, with = FALSE]
+    
+    # One-hot encode cols
+    data[NAME_TYPE_SUITE == "", NAME_TYPE_SUITE := "NA"]
+    data[OCCUPATION_TYPE == "", OCCUPATION_TYPE := "NA"]
+    data[FONDKAPREMONT_MODE == "", FONDKAPREMONT_MODE := "NA"]
+    data[HOUSETYPE_MODE == "", HOUSETYPE_MODE := "NA"]
+    data[WALLSMATERIAL_MODE == "", WALLSMATERIAL_MODE := "NA"]
+    
+    encode_cols <- c("NAME_TYPE_SUITE", "NAME_INCOME_TYPE", "NAME_EDUCATION_TYPE", "NAME_FAMILY_STATUS",
+                     "NAME_HOUSING_TYPE", "OCCUPATION_TYPE", "WEEKDAY_APPR_PROCESS_START",
+                     "ORGANIZATION_TYPE", "FONDKAPREMONT_MODE", "HOUSETYPE_MODE", "WALLSMATERIAL_MODE")
+
+    data <- one_hot_encode(data, encode_cols)
+    
+    # Remove the remaining categorical features
     data <- remove_categorical(data)
     
     return(data)
@@ -53,8 +69,28 @@ remove_categorical <- function(data) {
 }
 
 
+one_hot_encode <- function(data, encode_cols) {
+    for(ec in encode_cols) {
+        print(ec)
+        onehot_tmp <- as.data.table(model.matrix(~data[[ec]]))
+        colnames(onehot_tmp) <- gsub("data\\[\\[ec\\]\\]", sprintf("%s_", ec), colnames(onehot_tmp))
+        onehot_tmp[, 1 := NULL]  # Delete intercept
+        
+        data <- cbind(data, onehot_tmp)
+    }
+    
+    return(data)
+}
+
+
 train_processed <- preprocess_data(train)
 test_processed <- preprocess_data(test)
+
+# Remove columns that aren't in both
+rm_from_train <- colnames(train_processed)[which(!colnames(train_processed) %in% colnames(test_processed))]
+rm_from_test <- colnames(test_processed)[which(!colnames(test_processed) %in% colnames(train_processed))]
+
+# todo: remove them
 
 # XGB prediction function ----------------------------------------------------------
 
@@ -105,7 +141,8 @@ while(TRUE) {
                    subsample = subsample,
                    nrounds = nrounds)
     
-    x <- c(sample(cols, sample(0:length(cols), 1)))
+    # x <- c(sample(cols, sample(0:length(cols), 1)))
+    x <- cols
     
     predictions <- predict_xgb(train_processed, test_processed, params, x)
     auc <- Metrics::auc(test[["TARGET"]], predictions)
