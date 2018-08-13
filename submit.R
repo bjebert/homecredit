@@ -44,4 +44,5 @@ submit_predictions <- function(version, description = "", val_error = NA, dry_ru
     
 }
 
-preds <- submit_predictions("003", "Add Babak's feature AMT_RATIO", 0.7503725)
+preds <- submit_predictions("006", "Add some additional features from installments_payments", 0.7639669)
+
