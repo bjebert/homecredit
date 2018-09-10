@@ -44,5 +44,5 @@ submit_predictions <- function(version, description = "", val_error = NA, dry_ru
     
 }
 
-preds <- submit_predictions("006", "Add some additional features from installments_payments", 0.7639669)
+preds <- submit_predictions("010", "Target encode all categorical/numeric features (5k features)", 0.7791055)
 
